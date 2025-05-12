@@ -1,0 +1,52 @@
+<div>
+    <h1>
+        {{ article.title }}
+    </h1>
+
+    <a href="{% url 'article:index' %}">
+        글 목록으로 돌아가기
+    </a>
+
+    <div>
+        <h3>
+            작성자: {{ article.author.username }}
+        </h3>
+
+        <div>
+            <a href="{% url 'article:edit' article.id %}">
+                글 수정하기
+            </a>
+
+            <a href="{% url 'article:delete' article.id %}">
+                글 삭제하기
+            </a>
+        </div>
+
+        <hr />
+
+        <p>
+            {{ article.content }}
+        </p>
+    </div>
+</div>
+
+
+<hr />
+<h3>
+    댓글
+</h3>
+
+{% for comment in article.comments.all %}
+  <p>{{ comment.author.username }}: {{ comment.content }}</p>
+  {% if comment.author == user %}
+    <a href="{% url 'article:delete_comment' comment.pk %}">댓글 삭제</a>
+  {% endif %}
+{% empty %}
+  <p>댓글이 없습니다.</p>
+{% endfor %}
+
+<form action="{% url 'article:create_comment' article.pk %}" method="post">
+  {% csrf_token %}
+  <input type="text" name="content" placeholder="댓글 작성" required>
+  <button type="submit">작성</button>
+</form>
